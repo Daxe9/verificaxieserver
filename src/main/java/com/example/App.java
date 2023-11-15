@@ -1,8 +1,11 @@
 package com.example;
 
+import java.io.DataOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Hello world!
@@ -29,20 +32,37 @@ public class App
             String randomWord = randomWords.get((int) (Math.random() * randomWords.size()));
             System.out.println("Random Word: " + randomWord);
 
-            ArrayList<Socket> sockets = new ArrayList<>();
-            ArrayList<Server> clients = new ArrayList<>();
+            HashMap<Socket, Server> map = new HashMap<>();
+            // ArrayList<Socket> sockets = new ArrayList<>();
+            // ArrayList<Server> clients = new ArrayList<>();
             ServerSocket serverSocket = new ServerSocket(6969);
             System.out.println("Server started at 6969");
 
-            while (clients.size() < 3) {
+            while (map.size() < 3) {
                 Socket connection = serverSocket.accept();
-                Server server = new Server(connection, sockets, randomWord);
-                clients.add(server);
+                Server server = new Server(connection, map, randomWord);
+                map.put(connection, server);
+                // clients.add(server);
+                // sockets.add(connection);
             }
 
-            for (Server server : clients) {
-                server.start();                
+            for (Map.Entry<Socket, Server> entry : map.entrySet()) {
+                Socket key = entry.getKey();
+                Server value = entry.getValue();
+                DataOutputStream out = new DataOutputStream(key.getOutputStream());
+                out.writeBytes("f\n");
+                out.close();
+                value.start();
             }
+            // for (Socket socket : sockets) {
+            //     DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+            //     out.writeBytes("f\n");
+            //     out.close();
+            // } 
+
+            // for (Server server : clients) {
+            //     server.start();                
+            // }
             
         } catch (Exception e) {
             System.err.println(e.getMessage());

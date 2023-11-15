@@ -7,24 +7,26 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.HashMap;
 
 public class Server extends Thread {
     Socket connection;
     BufferedReader in;
     DataOutputStream out;
-    ArrayList<Socket> otherConnections;
+    HashMap<Socket, Server> map;
     String randomWord;
     String[] randomWordArr;
     String guessedWord;
     String[] guessedWordArr;
     int attempts = 0;
 
-    public Server(Socket connection, ArrayList<Socket> otherConnections, String randomWord) throws IOException {
+    public Server(Socket connection, HashMap<Socket, Server> map, String randomWord) throws IOException {
         this.randomWord = randomWord;
         this.randomWordArr = randomWord.split("");
         this.connection = connection;
-        this.otherConnections = otherConnections;
+        this.map = map;
         this.guessedWord = "";
+
     
         for (int i = 0; i < randomWord.length(); ++i) {
             this.guessedWord = this.guessedWord.concat("*");
@@ -46,6 +48,7 @@ public class Server extends Thread {
      * c -> errore, ripeti,
      * d -> corretto
      * e -> incorretto
+     * f -> start game
      */
 
     private String getClientResponse() throws IOException {
@@ -138,7 +141,7 @@ public class Server extends Thread {
 
     private void endGame() {
         try {
-            for (Socket socket : otherConnections) {
+            for (Socket socket : map.keySet()) {
                 DataOutputStream out = new DataOutputStream(socket.getOutputStream()); 
                 out.writeBytes("b\n");
                 out.close();
