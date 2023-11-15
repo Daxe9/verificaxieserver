@@ -30,16 +30,19 @@ public class App
             System.out.println("Random Word: " + randomWord);
 
             ArrayList<Socket> sockets = new ArrayList<>();
+            ArrayList<Server> clients = new ArrayList<>();
             ServerSocket serverSocket = new ServerSocket(6969);
             System.out.println("Server started at 6969");
-            
-            while (true) {
+
+            while (clients.size() < 3) {
                 Socket connection = serverSocket.accept();
                 Server server = new Server(connection, sockets, randomWord);
-                server.start();
+                clients.add(server);
             }
 
-
+            for (Server server : clients) {
+                server.start();                
+            }
             
         } catch (Exception e) {
             System.err.println(e.getMessage());

@@ -49,7 +49,11 @@ public class Server extends Thread {
      */
 
     private String getClientResponse() throws IOException {
-        String result = in.readLine().trim().toLowerCase();
+        String temp = in.readLine();
+        if (temp == null) {
+            connection.close();
+        }
+        String result = temp.trim().toLowerCase();
         return result;
     }
 
