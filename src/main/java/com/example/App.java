@@ -34,15 +34,12 @@ public class App
             ServerSocket serverSocket = new ServerSocket(6969);
             System.out.println("Server started at 6969");
 
-            while (clients.size() < 3) {
+            while (true) {
                 Socket connection = serverSocket.accept();
                 Server server = new Server(connection, sockets, randomWord);
-                clients.add(server);
+                server.start();
             }
 
-            for (Server server : clients) {
-                server.start();                
-            }
             
         } catch (Exception e) {
             System.err.println(e.getMessage());
