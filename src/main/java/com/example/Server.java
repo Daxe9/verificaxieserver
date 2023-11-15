@@ -52,6 +52,8 @@ public class Server extends Thread {
         String temp = in.readLine();
         if (temp == null) {
             connection.close();
+            System.err.println("Wrong input");
+            System.exit(1);
         }
         String result = temp.trim().toLowerCase();
         return result;
